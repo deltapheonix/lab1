@@ -40,7 +40,7 @@ using namespace std;
 #include <X11/keysym.h>
 #include <GL/glx.h>
 
-const int MAX_PARTICLES = 100;
+const int MAX_PARTICLES = 2000;
 const float GRAVITY     = 0.1;
 
 //some structures
@@ -217,12 +217,12 @@ void makeParticle(int x, int y)
 		return;
 	cout << "makeParticle() " << x << " " << y << endl;
 	//set position of particle
-	Particle *p = &g.particle[MAX_PARTICLES];
+	Particle *p = &g.particle[g.n];
 	p->s.center.x = x;
 	p->s.center.y = y;
-	p->velocity.y = -4.0;
-	//p->velocity.y = ((float)rand() /(float)RAND_MAX) + 2.5;
-	p->velocity.x =  1.0;
+	//p->velocity.y = -4.0;
+	p->velocity.y = ((float)rand() /(float)RAND_MAX) + 2.0;
+	p->velocity.x = ((float)rand() /(float)RAND_MAX) + 2.0;
 	++g.n;
 }
 
@@ -246,7 +246,10 @@ void check_mouse(XEvent *e)
 		if (e->xbutton.button==1) {
 			//Left button was pressed.
 			int y = g.yres - e->xbutton.y;
-			makeParticle(e->xbutton.x, y);
+			for (int i = 0; i <20; i++)
+			{
+			    makeParticle(e->xbutton.x, y);
+			}
 			return;
 		}
 		if (e->xbutton.button==3) {
@@ -259,8 +262,12 @@ void check_mouse(XEvent *e)
 		if (savex != e->xbutton.x || savey != e->xbutton.y) {
 			savex = e->xbutton.x;
 			savey = e->xbutton.y;
+			int y = g.yres - e->xbutton.y;
 			//Code placed here will execute whenever the mouse moves.
-
+		        for (int i = 0; i <20; i++)
+			{
+			    makeParticle(e->xbutton.x, y);
+			}
 
 		}
 	}
@@ -291,21 +298,25 @@ void movement()
 {
 	if (g.n <= 0)
 		return;
-	for (int i=0; i < g.n; i++)
-	{
+	for (int i=0; i < g.n; i++){
 		Particle *p = &g.particle[i];
 		Shape *s = &g.box;
 
 		p->velocity.y -= GRAVITY;
-		//Check for collisions	
-		if (((p->s.center.y - p->s.height/2) <= (s->center.y + s->height)))
-		{
-	    		p->velocity.y = -p->velocity.y;
-		}
-    	
 		p->s.center.y += p->velocity.y;
 		p->s.center.x += p->velocity.x;
 	
+		//Check for collisions	
+		if ((p->s.center.y < s->center.y + s->height) && 
+		    (p->s.center.x > s->center.x-s->width) && 
+		    (p->s.center.x < s->center.x+s->width) && 
+		    (p->s.center.y > s->center.y-s->height)){
+		    	p->s.center.y = s->center.y+s->height;
+	    		p->velocity.y *= -1.0;
+			p->velocity.y *= 0.5;
+		}
+    	
+
 
 
 
