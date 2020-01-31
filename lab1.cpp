@@ -1,6 +1,6 @@
 //
-//modified by:
-//date:
+//modified by: Doney Peters
+//date: 1/21/2020
 //
 //3350 Spring 2019 Lab-1
 //This program demonstrates the use of OpenGL and XWindows
@@ -39,6 +39,7 @@ using namespace std;
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <GL/glx.h>
+#include "fonts.h"
 
 const int MAX_PARTICLES = 2000;
 const float GRAVITY     = 0.1;
@@ -207,6 +208,8 @@ void init_opengl(void)
 	glOrtho(0, g.xres, 0, g.yres, -1, 1);
 	//Set the screen background color
 	glClearColor(0.1, 0.1, 0.1, 1.0);
+	glEnable(GL_TEXTURE_2D);
+	initialize_fonts();
 }
 
 void makeParticle(int x, int y)
@@ -310,16 +313,13 @@ void movement()
 		if ((p->s.center.y < s->center.y + s->height) && 
 		    (p->s.center.x > s->center.x-s->width) && 
 		    (p->s.center.x < s->center.x+s->width) && 
-		    (p->s.center.y > s->center.y-s->height)){
-		    	p->s.center.y = s->center.y+s->height;
-	    		p->velocity.y *= -1.0;
+		    (p->s.center.y > s->center.y-s->height)) 
+		{
+		    p->s.center.y = s->center.y+s->height;
+	    	p->velocity.y *= -1.0;
 			p->velocity.y *= 0.5;
 		}
     	
-
-
-
-
 		//check for off-screen
 		if (p->s.center.y < 0.0) {
 			//cout << "off screen" << endl;
@@ -367,15 +367,12 @@ void render()
 	}
 	//
 	//Draw your 2D text here
-
-
-
-
-
-
-
-
-
+	Rect r;
+	r.bot = s->center.y - s->height / 2;
+	r.left = s->center.x - s->width / 2;
+	r.center = 0;
+	ggprint8b(&r, 16, 0x00ff0000, "Requirements");
+	
 }
 
 
