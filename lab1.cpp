@@ -113,6 +113,7 @@ int main()
 		render();
 		x11.swapBuffers();
 	}
+	cleanup_fonts();
 	return 0;
 }
 
@@ -316,15 +317,15 @@ void movement()
 		    (p->s.center.y > s->center.y-s->height)) 
 		{
 		    p->s.center.y = s->center.y+s->height;
-	    	p->velocity.y *= -1.0;
-			p->velocity.y *= 0.5;
+	    	    p->velocity.y *= -1.0;
+                    p->velocity.y *= 0.5;
 		}
     	
 		//check for off-screen
 		if (p->s.center.y < 0.0) {
-			//cout << "off screen" << endl;
-			g.particle[i] = g.particle[ g.n-1];
-			--g.n;
+		    //cout << "off screen" << endl;
+		    g.particle[i] = g.particle[ g.n-1];
+		    --g.n;
 		}
 	}
 }
